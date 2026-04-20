@@ -17,8 +17,9 @@ async def get_ebay_cookies(proxy: Optional[str] = None) -> Optional[Dict[str, st
         browser = None
         page = None
         try:
-            # ЗАПУСКАЕМ БРАУЗЕР В ВИДИМОМ РЕЖИМЕ, ЭТО САМОЕ ВАЖНОЕ
-            browser = await p.chromium.launch(headless=False, args=["--no-sandbox"])
+            # <<< ИЗМЕНЕНИЕ: Запускаем браузер в фоновом (headless) режиме
+            # Меняем headless=False на headless=True
+            browser = await p.chromium.launch(headless=True, args=["--no-sandbox"])
 
             context_args = {
                 "user_agent": 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
@@ -38,8 +39,8 @@ async def get_ebay_cookies(proxy: Optional[str] = None) -> Optional[Dict[str, st
             await page.goto(main_url, timeout=120000, wait_until="domcontentloaded")
 
             # --- ГЛАВНОЕ ИЗМЕНЕНИЕ: НЕ ЖДЕМ ЭЛЕМЕНТ, А ПРОСТО ДЕЛАЕМ ПАУЗУ ---
-            logger.info("Страница загружена. Ожидание 15 секунд для стабилизации и сбора cookies...")
-            await asyncio.sleep(15)
+            logger.info("Страница загружена. Ожидание 3 секунд для стабилизации и сбора cookies...")
+            await asyncio.sleep(3)
 
             # Если после паузы мы все еще на странице верификации, сообщаем об этом
             if "captcha" in page.url or "verify" in page.url:
