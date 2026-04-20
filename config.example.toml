@@ -1,0 +1,7 @@
+[telegram]
+bot_token = "PASTE_TELEGRAM_BOT_TOKEN_HERE"
+channel_id = "0"
+
+[parser]
+pause_general = 10
+pause_between_links = 5
