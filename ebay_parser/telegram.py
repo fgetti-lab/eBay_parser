@@ -1,18 +1,18 @@
+# telegram.py
 import httpx
 from loguru import logger
-from .models import EbayItem  # <--- ВОТ ЭТА СТРОКА БЫЛА ПРОПУЩЕНА
+from .models import EbayItem
 
 
 class TelegramNotifier:
     """Класс для отправки уведомлений в Telegram."""
 
-    def __init__(self, token: str, channel_id: str):
+    def __init__(self, token: str):
         self.token = token
-        self.channel_id = channel_id
         self.api_url = f"https://api.telegram.org/bot{self.token}/sendMessage"
 
-    async def send_notification(self, item: EbayItem):
-        """Форматирует и отправляет сообщение."""
+    async def send_notification(self, item: EbayItem, channel_id: str):
+        """Форматирует и отправляет сообщение в указанный канал."""
         title = self._escape_markdown(item.title)
         price = self._escape_markdown(f"{item.price} {item.currency}")
 
@@ -27,16 +27,16 @@ class TelegramNotifier:
                 response = await client.post(
                     self.api_url,
                     json={
-                        "chat_id": self.channel_id,
+                        "chat_id": channel_id,
                         "text": message,
                         "parse_mode": "MarkdownV2",
                         "disable_web_page_preview": False
                     }
                 )
                 response.raise_for_status()
-                logger.debug(f"Уведомление для товара {item.item_id} успешно отправлено.")
+                logger.debug(f"Уведомление для товара {item.item_id} успешно отправлено в канал {channel_id}.")
             except httpx.HTTPStatusError as e:
-                logger.error(f"Ошибка отправки уведомления: {e.response.status_code} - {e.response.text}")
+                logger.error(f"Ошибка отправки уведомления в канал {channel_id}: {e.response.status_code} - {e.response.text}")
             except Exception as e:
                 logger.error(f"Непредвиденная ошибка при отправке в Telegram: {e}")
 
