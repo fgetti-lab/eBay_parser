@@ -1,0 +1,9 @@
+python-telegram-bot[ext]
+loguru
+pydantic
+tomli
+tomli-w
+beautifulsoup4
+curl_cffi
+lxml
+httpx
